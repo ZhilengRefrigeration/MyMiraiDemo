@@ -24,7 +24,7 @@ public final class Demo3 extends JavaPlugin {
         channel.subscribeAlways(FriendMessageEvent.class, event -> {
             if (event.getMessage().contentToString().contains("hello")) {
                 event.getSender().sendMessage("Hello!" + event.getSenderName());
-                System.out.println("处理了一次请求");
+
             }
         });
     }
