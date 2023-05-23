@@ -7,6 +7,7 @@ import net.mamoe.mirai.event.Event;
 import net.mamoe.mirai.event.EventChannel;
 import net.mamoe.mirai.event.GlobalEventChannel;
 
+
 public final class Demo3 extends JavaPlugin {
     public static final Demo3 INSTANCE = new Demo3();
 
@@ -24,6 +25,7 @@ public final class Demo3 extends JavaPlugin {
 
         //注册
         channel.registerListenerHost(new MessageListening());
+
 
     }
 }
