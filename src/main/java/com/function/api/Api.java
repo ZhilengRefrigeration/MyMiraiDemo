@@ -1,80 +1,62 @@
 package com.function.api;
 
-import net.mamoe.mirai.Bot;
+import java.io.*;
+import java.net.*;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+public class Api extends ServerSocket {
+    private static final int SERVER_PORT = 9090;
 
-public class Api extends Thread{
-    @Override
-    public void run() {
+    public Api() throws IOException {
+        super(SERVER_PORT);
         try {
-            this.api();
+            System.out.println("启动服务器");
+            while (true) {
+                Socket socket = this.accept();
+                new ServerThread(socket).start(); // 每当收到一个 socket 就创建一个线程并启动
+            }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+        } finally {
+            this.close();
+        }
+    }
+}
+
+class ServerThread extends Thread {
+    private Socket client;
+    private BufferedReader in;
+    private PrintWriter out;
+
+    public ServerThread(Socket client) {
+        super();
+        this.client = client;
+        try {
+            this.in = new BufferedReader(new InputStreamReader(client.getInputStream()));
+            this.out = new PrintWriter(new OutputStreamWriter(client.getOutputStream(), "UTF-8"), true);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
-    //监听方法
-    public void api() throws IOException {
-        int portNumber = 9090;
-        ServerSocket serverSocket = new ServerSocket(portNumber);
-        System.out.println("Listening on port " + portNumber + "...");
+    @Override
+    public void run() {
+        try {
+            String request = in.readLine(); // 读取客户端发送的请求
 
-        while (true) {
-            Socket clientSocket = serverSocket.accept();
-            System.out.println("Accepted connection from " + clientSocket);
+            // 解析请求路径
+            String[] requestParts = request.split(" ");
+            if (requestParts.length >= 2 && requestParts[1].equals("/api/data")) {
+                String response = "{\"data\":\"你好\"}";
+                out.println("HTTP/1.1 200 OK");
+                out.println("Content-Type: application/json"); // 返回 JSON 类型数据
+                out.println("");
+                out.println(); // 发送空行，表示响应头结束
+                out.println(response); // 发送响应体
+            }
 
-            // 创建一个新线程来处理客户端请求
-            new Thread(() -> {
-                try {
-                    BufferedReader in = new BufferedReader(
-                            new InputStreamReader(clientSocket.getInputStream()));
-
-                    String inputLine;
-                    while ((inputLine = in.readLine()) != null) {
-                        if (inputLine.startsWith("GET")) {
-                            String[] tokens = inputLine.split(" ");
-                            String filename = tokens[1].substring(1);
-
-                            if (filename.equals("api/data")) { // 如果请求的路径为 /api/data
-                                PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
-
-                                out.println("HTTP/1.1 200 OK");
-                                out.println("Content-Type: application/json");
-                                out.println("");
-                                out.println("{\"data\":\""+ Bot.findInstance(3377658377L).getFriends()+"\"}"); // 返回 JSON 数据
-
-                                out.close();
-                                break;
-                            } else if (filename.equals("api/date")) { // 如果请求的路径为 /api/date
-                                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-                                Date date = new Date();
-
-                                PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
-
-                                out.println("HTTP/1.1 200 OK");
-                                out.println("Content-Type: application/json");
-                                out.println("");
-                                out.println("{\"date\":\"" + formatter.format(date) + "\"}"); // 返回当前日期
-
-                                out.close();
-                                break;
-                            }
-                        }
-                    }
-
-                    clientSocket.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }).start();
+            client.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

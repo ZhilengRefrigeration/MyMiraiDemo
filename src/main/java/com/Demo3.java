@@ -29,9 +29,16 @@ public final class Demo3 extends JavaPlugin {
         channel.registerListenerHost(new MessageListening());
 
         //启动api
-        new Api().start();
-        getLogger().info("插件启用成功！！");
+            new Thread(() -> {
 
+                try {
+                    new Api();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
+            }).start();
+        getLogger().info("小制冷插件加载成功！");
 
 
     }

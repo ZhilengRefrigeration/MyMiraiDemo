@@ -31,7 +31,7 @@ public class MessageListening extends SimpleListenerHost {
         /**
          * 触发.jrrp指令
          */
-        if (event.getMessage().contentToString().equals(".jrrp")) {
+        if (event.getMessage().contentToString().equals(".jrrp") || event.getMessage().contentToString().equals("。jrrp")) {
             event.getSubject().sendMessage(event.getSenderName() + "今天的人品值是: " + jrrp.getUserCharacterValue((int) event.getSender().getId()));
         }
     }
@@ -52,7 +52,7 @@ public class MessageListening extends SimpleListenerHost {
         /**
          * 触发.jrrp指令
          */
-        if (event.getMessage().contentToString().equals(".jrrp")) {
+        if (event.getMessage().contentToString().equals(".jrrp") || event.getMessage().contentToString().equals("。jrrp")) {
             event.getSubject().sendMessage(event.getSenderName() + "今天的人品值是: " + jrrp.getUserCharacterValue((int) event.getSender().getId()));
         }
 
