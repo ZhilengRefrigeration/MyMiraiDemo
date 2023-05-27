@@ -33,5 +33,6 @@ public final class Demo3 extends JavaPlugin {
         getLogger().info("插件启用成功！！");
 
 
+
     }
 }
