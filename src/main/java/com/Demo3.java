@@ -1,11 +1,14 @@
 package com;
 
+import com.function.api.Api;
 import com.function.main.MessageListening;
 import net.mamoe.mirai.console.plugin.jvm.JavaPlugin;
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescriptionBuilder;
 import net.mamoe.mirai.event.Event;
 import net.mamoe.mirai.event.EventChannel;
 import net.mamoe.mirai.event.GlobalEventChannel;
+
+import java.io.IOException;
 
 public final class Demo3 extends JavaPlugin {
     public static final Demo3 INSTANCE = new Demo3();
@@ -24,6 +27,11 @@ public final class Demo3 extends JavaPlugin {
 
         //注册
         channel.registerListenerHost(new MessageListening());
+
+        //启动api
+        new Api().start();
+        getLogger().info("插件启用成功！！");
+
 
     }
 }
